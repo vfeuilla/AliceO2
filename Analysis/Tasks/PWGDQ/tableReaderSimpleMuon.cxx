@@ -41,7 +41,7 @@ struct TableReaderSimpleMuon {
   AnalysisCompositeCut* fEventCut;
   AnalysisCompositeCut* fTrackCut;
   AnalysisCompositeCut* fMuonCut;
-    AnalysisCompositeCut* fDiMuonCut;
+  AnalysisCompositeCut* fDiMuonCut;
 
   // HACK: In order to be able to deduce which kind of aod object is transmitted to the templated VarManager::Fill functions
   //         a constexpr static bit map must be defined and sent as template argument
@@ -63,7 +63,7 @@ struct TableReaderSimpleMuon {
     fHistMan->SetDefaultVarNames(VarManager::fgVariableNames, VarManager::fgVariableUnits);
 
     DefineHistograms("Event_BeforeCuts;Event_AfterCuts;TrackMuon_BeforeCuts;TrackMuon_AfterCuts;PairsMuon;"); // define all histograms
-    VarManager::SetUseVars(fHistMan->GetUsedVars());                                                                                                                   // provide the list of required variables so that VarManager knows what to fill
+    VarManager::SetUseVars(fHistMan->GetUsedVars());                                                          // provide the list of required variables so that VarManager knows what to fill
 
     DefineCuts();
   }
@@ -84,18 +84,17 @@ struct TableReaderSimpleMuon {
 
     fMuonCut = new AnalysisCompositeCut(true);
     AnalysisCut kineMuonCut;
-      kineMuonCut.AddCut(VarManager::kPt, 1.0, 20);
-      kineMuonCut.AddCut(VarManager::kEta, -4.0, -2.5);
-      kineMuonCut.AddCut(VarManager::kMuonChi2, 0.0, 1e6);
-//      kineMuonCut.AddCut(VarManager::kMuonRAtAbsorberEnd, 17.6, 89.5);
+    kineMuonCut.AddCut(VarManager::kPt, 1.0, 20);
+    kineMuonCut.AddCut(VarManager::kEta, -4.0, -2.5);
+    kineMuonCut.AddCut(VarManager::kMuonChi2, 0.0, 1e6);
+    //      kineMuonCut.AddCut(VarManager::kMuonRAtAbsorberEnd, 17.6, 89.5);
     fMuonCut->AddCut(&kineMuonCut);
 
-      fDiMuonCut = new AnalysisCompositeCut(true);
-      AnalysisCut diMuonCut;
-      diMuonCut.AddCut(VarManager::kRap, 2.5, 4.0);
-      fDiMuonCut->AddCut(&diMuonCut);
-      
-      
+    fDiMuonCut = new AnalysisCompositeCut(true);
+    AnalysisCut diMuonCut;
+    diMuonCut.AddCut(VarManager::kRap, 2.5, 4.0);
+    fDiMuonCut->AddCut(&diMuonCut);
+
     VarManager::SetUseVars(AnalysisCut::fgUsedVars); // provide the list of required variables so that VarManager knows what to fill
   }
 
@@ -134,7 +133,7 @@ struct TableReaderSimpleMuon {
     for (auto& tpos : selectedMuonsNeg) {
       for (auto& tneg : selectedMuonsPos) {
         VarManager::FillMuonPair(tpos, tneg);
-          if (!fDiMuonCut->IsSelected(VarManager::fgValues))
+        if (!fDiMuonCut->IsSelected(VarManager::fgValues))
           continue;
         fHistMan->FillHistClass("PairsMuon", VarManager::fgValues);
       }
@@ -212,17 +211,17 @@ struct TableReaderSimpleMuon {
           fHistMan->AddHistogram(classStr.Data(), "NonBendingCoor", "", false, 100, 0.065, 0.07, VarManager::kMuonNonBendingCoor);
           fHistMan->AddHistogram(classStr.Data(), "Chi2", "", false, 100, 0.0, 200.0, VarManager::kMuonChi2);
           fHistMan->AddHistogram(classStr.Data(), "Chi2MatchTrigger", "", false, 100, 0.0, 20.0, VarManager::kMuonChi2MatchTrigger);
-            fHistMan->AddHistogram(classStr.Data(), "RAtAbsorberEnd", "", false, 140, 10, 150, VarManager::kMuonRAtAbsorberEnd);
+          fHistMan->AddHistogram(classStr.Data(), "RAtAbsorberEnd", "", false, 140, 10, 150, VarManager::kMuonRAtAbsorberEnd);
         }
       }
 
       if (classStr.Contains("Pairs")) {
         fHistMan->AddHistClass(classStr.Data());
-          fHistMan->AddHistogram(classStr.Data(), "Mass", "", false, 100, 2.0, 12, VarManager::kMass);
-          fHistMan->AddHistogram(classStr.Data(), "Pt", "", false, 200, 0.0, 20.0, VarManager::kPt);
-          fHistMan->AddHistogram(classStr.Data(), "Rapidity", "", false, 19, 2.0, 4.3, VarManager::kRap);
-          fHistMan->AddHistogram(classStr.Data(), "Mass_Pt", "mass vs p_{T} distribution", false, 100, 0.0, 20.0, VarManager::kMass, 200, 0.0, 20.0, VarManager::kPt); // TH2F histogram
-          fHistMan->AddHistogram(classStr.Data(), "Mass_Y", "mass vs y distribution", false, 100, 0.0, 20.0, VarManager::kMass, 19, 2.0, 4.3, VarManager::kRap); // TH2F histogram
+        fHistMan->AddHistogram(classStr.Data(), "Mass", "", false, 100, 2.0, 12, VarManager::kMass);
+        fHistMan->AddHistogram(classStr.Data(), "Pt", "", false, 200, 0.0, 20.0, VarManager::kPt);
+        fHistMan->AddHistogram(classStr.Data(), "Rapidity", "", false, 19, 2.0, 4.3, VarManager::kRap);
+        fHistMan->AddHistogram(classStr.Data(), "Mass_Pt", "mass vs p_{T} distribution", false, 100, 0.0, 20.0, VarManager::kMass, 200, 0.0, 20.0, VarManager::kPt); // TH2F histogram
+        fHistMan->AddHistogram(classStr.Data(), "Mass_Y", "mass vs y distribution", false, 100, 0.0, 20.0, VarManager::kMass, 19, 2.0, 4.3, VarManager::kRap);       // TH2F histogram
       }
     } // end loop over histogram classes
   }
